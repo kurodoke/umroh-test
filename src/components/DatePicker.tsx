@@ -38,7 +38,7 @@ export default function DatePicker({
                 {label}
             </Typography>
             <Popover
-                placement="bottom"
+                placement="bottom-start"
                 open={isOpenPopover}
                 handler={popoverHandler}
             >

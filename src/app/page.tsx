@@ -11,23 +11,31 @@ import {
     Textarea,
     Typography,
     Option,
-    Popover,
-    PopoverContent,
-    PopoverHandler,
 } from "@material-tailwind/react";
-import { format } from "date-fns";
 import "react-day-picker/style.css";
 import React from "react";
 import { useEffect, useState } from "react";
-import { DayPicker } from "react-day-picker";
 import DatePicker from "@/components/DatePicker";
 import CustomSelect from "@/components/CustomSelect";
 
-//temp data of month period before using database
-type MonthPeriodInterface = Array<string>;
-type DepartureFromInterface = Array<string>;
-type DepartureToInterface = Array<string>;
+//interface
+interface AirlineInterface {
+    id: number;
+    name: string;
+    route: string;
+    price: number;
+}
 
+//type of data
+type MonthPeriodType = Array<string>;
+type DepartureFromType = Array<string>;
+type DepartureToType = Array<string>;
+type DaysPacketType = Array<number>;
+type ReturnFromType = Array<string>;
+type ReturnToType = Array<string>;
+type AirlinesType = Array<AirlineInterface>;
+
+//data month period
 const dataMonthPeriod = [
     "01 SEPT 2024 - 30 OKT 2024",
     "01 NOV 2024 - 10 DES 2024",
@@ -38,6 +46,7 @@ const dataMonthPeriod = [
     "01 APR 2025 - 30 APR 2025",
 ];
 
+//data departure from
 const dataDepartureFrom = [
     "MAKASSAR",
     "JAKARTA",
@@ -49,30 +58,86 @@ const dataDepartureFrom = [
     "SINGAPURA",
     "KUALA LUMPUR",
 ];
-
+//data departure to
 const dataDepartureTo = ["JEDDAH", "MADINAH"];
+
+//data packets of days
+const dataDaysPacket = [9, 12, 13, 16, 24, 30];
+
+//data return from
+const dataReturnFrom = ["JEDDAH", "MADINAH"];
+
+//data return to
+const dataReturnTo = [
+    "MAKASSAR",
+    "JAKARTA",
+    "SURABAYA",
+    "BANJARMASIN",
+    "MEDAN",
+    "KENDARI",
+    "KOTA PALU",
+    "SINGAPURA",
+    "KUALA LUMPUR",
+];
+
+const dataAirlines: AirlinesType = [
+    {
+        id: 1,
+        name: "GARUDA INDONESIA",
+        price: 17900000,
+        route: "UPG-CKG-JED",
+    },
+    {
+        id: 2,
+        name: "LION",
+        price: 16200000,
+        route: "UPG-JED",
+    },
+    {
+        id: 3,
+        name: "AIR ASIA",
+        price: 15500000,
+        route: "UPG-KUL-JED",
+    },
+];
 
 interface SavedDataInterface {
     monthPeriod: string;
     departureDate: Date;
     departureFrom: string;
     departureTo: string;
+    daysPacket: number | string;
+    returnDate: Date;
+    returnFrom: string;
+    returnTo: string;
+    airline: AirlineInterface;
 }
 
 export default function Home() {
     //fetch data
-    const [monthPeriod, setMonthPeriod] = useState<MonthPeriodInterface>([""]);
-    const [departureFrom, setDepartureFrom] = useState<DepartureFromInterface>([
-        "",
+    const [monthPeriod, setMonthPeriod] = useState<MonthPeriodType>([""]);
+    const [departureFrom, setDepartureFrom] = useState<DepartureFromType>([""]);
+    const [departureTo, setDeparturetTo] = useState<DepartureToType>([""]);
+    const [daysPacket, setDaysPacket] = useState<DaysPacketType>([0]);
+    const [returnFrom, setReturnFrom] = useState<ReturnFromType>([""]);
+    const [returnTo, setReturntTo] = useState<ReturnToType>([""]);
+    const [airlines, setAirlines] = useState<AirlinesType>([
+        { id: 0, name: "Pilih Maskapai", price: 0, route: "" },
     ]);
-    const [departureTo, setDeparturetTo] = useState<DepartureToInterface>([""]);
+
+    const [airlinesId, setAirlinesId] = useState<Array<number>>([0]);
 
     //saved data
     const [savedData, setSavedData] = useState<SavedDataInterface>({
         monthPeriod: "Pilih Periode Bulan",
         departureDate: new Date(),
         departureFrom: "Pilih Berangkat Darimana",
-        departureTo: "Pilih Tujuan Kemana",
+        departureTo: "Pilih Berangkat Kemana",
+        daysPacket: "Pilih Hari",
+        returnDate: new Date(),
+        returnFrom: "Pilih Pulang Darimana",
+        returnTo: "Pilih Pulang Kemana",
+        airline: { id: 0, name: "Pilih Maskapai", price: 0, route: "" },
     });
 
     //open and close modal
@@ -86,14 +151,43 @@ export default function Home() {
         if (monthPeriod.length == 1) setMonthPeriod(dataMonthPeriod);
         if (departureFrom.length == 1) setDepartureFrom(dataDepartureFrom);
         if (departureTo.length == 1) setDeparturetTo(dataDepartureTo);
-    }, [monthPeriod, departureTo, departureFrom]);
+        if (daysPacket.length == 1) setDaysPacket(dataDaysPacket);
+        if (returnFrom.length == 1) setReturnFrom(dataReturnFrom);
+        if (returnTo.length == 1) setReturntTo(dataReturnTo);
+        if (airlines.length == 1) {
+            setAirlines(dataAirlines);
+            setAirlinesId([
+                0,
+                ...dataAirlines.map((_airline) => {
+                    return _airline.id;
+                }),
+            ]);
+        }
+    }, [
+        monthPeriod,
+        departureTo,
+        departureFrom,
+        daysPacket,
+        returnTo,
+        returnFrom,
+        airlines,
+    ]);
+
+    useEffect(() => {
+        console.log(savedData);
+    }, [savedData]);
 
     return (
         <main>
             <Button className="" onClick={modalHandler}>
                 Tambah Produk
             </Button>
-            <Dialog open={isOpenModal} handler={modalHandler} size="xl">
+            <Dialog
+                open={isOpenModal}
+                handler={modalHandler}
+                size="xl"
+                className="p-2 md:p-5"
+            >
                 <DialogHeader>
                     <div className="flex justify-between w-full items-center">
                         <Typography variant="h4" color="blue-gray">
@@ -126,8 +220,9 @@ export default function Home() {
                             });
                         }}
                     />
-                    <div className="flex gap-4">
+                    <div className="flex gap-1 md:gap-4">
                         <CustomSelect
+                            className="w-6/12"
                             data={savedData.departureFrom}
                             defaultValue="Pilih Berangkat Darimana"
                             label="Berangkat Dari"
@@ -140,9 +235,10 @@ export default function Home() {
                             }}
                         />
                         <CustomSelect
+                            className="w-6/12"
                             data={savedData.departureTo}
-                            defaultValue="Pilih Tujuan Kemana"
-                            label="Tujuan Ke"
+                            defaultValue="Pilih Berangkat Kemana"
+                            label="Berangkat Ke"
                             list={departureTo}
                             onChange={(value) => {
                                 setSavedData({
@@ -152,145 +248,89 @@ export default function Home() {
                             }}
                         />
                     </div>
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-2 text-left font-medium"
-                        >
-                            Name
-                        </Typography>
-                        <Input
-                            color="gray"
-                            size="lg"
-                            placeholder="eg. White Shoes"
-                            name="name"
-                            className="placeholder:opacity-100 focus:!border-t-gray-900"
-                            containerProps={{
-                                className: "!min-w-full",
+                    <CustomSelect
+                        data={savedData.daysPacket.toString()}
+                        defaultValue="Pilih Hari"
+                        label="Paket Hari"
+                        list={daysPacket.map((_day) => {
+                            return _day.toString() + " Hari";
+                        })}
+                        valueList={daysPacket.map((_days) => {
+                            return _days.toString();
+                        })}
+                        onChange={(value) => {
+                            setSavedData({
+                                ...savedData,
+                                daysPacket: Number(value),
+                            });
+                        }}
+                    />
+                    <DatePicker
+                        defaultValue="Pilih Hari Kepulangan"
+                        label="Tanggal Pulang"
+                        dataDate={savedData.returnDate}
+                        onSelect={(value) => {
+                            setSavedData({
+                                ...savedData,
+                                returnDate: value,
+                            });
+                        }}
+                    />
+                    <div className="flex gap-1 md:gap-4">
+                        <CustomSelect
+                            className="w-6/12"
+                            data={savedData.returnFrom}
+                            defaultValue="Pilih Pulang Darimana"
+                            label="Pulang Dari"
+                            list={returnFrom}
+                            onChange={(value) => {
+                                setSavedData({
+                                    ...savedData,
+                                    returnFrom: value,
+                                });
                             }}
-                            labelProps={{
-                                className: "hidden",
+                        />
+                        <CustomSelect
+                            className="w-6/12"
+                            data={savedData.returnTo}
+                            defaultValue="Pilih Pulang Kemana"
+                            label="Pulang Ke"
+                            list={returnTo}
+                            onChange={(value) => {
+                                setSavedData({
+                                    ...savedData,
+                                    returnTo: value,
+                                });
                             }}
                         />
                     </div>
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-2 text-left font-medium"
-                        >
-                            Category
-                        </Typography>
-                        <Select
-                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
-                            placeholder="1"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                        >
-                            <Option>Clothing</Option>
-                            <Option>Fashion</Option>
-                            <Option>Watches</Option>
-                        </Select>
-                    </div>
-                    <div className="flex gap-4">
-                        <div className="w-full">
-                            <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="mb-2 text-left font-medium"
-                            >
-                                Weight
-                            </Typography>
-                            <Input
-                                color="gray"
-                                size="lg"
-                                placeholder="eg. <8.8oz | 250g"
-                                name="weight"
-                                className="placeholder:opacity-100 focus:!border-t-gray-900"
-                                containerProps={{
-                                    className: "!min-w-full",
-                                }}
-                                labelProps={{
-                                    className: "hidden",
-                                }}
-                            />
-                        </div>
-                        <div className="w-full">
-                            <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="mb-2 text-left font-medium"
-                            >
-                                Size
-                            </Typography>
-                            <Input
-                                color="gray"
-                                size="lg"
-                                placeholder="eg. US 8"
-                                name="size"
-                                className="placeholder:opacity-100 focus:!border-t-gray-900"
-                                containerProps={{
-                                    className: "!min-w-full",
-                                }}
-                                labelProps={{
-                                    className: "hidden",
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-2 text-left font-medium"
-                        >
-                            Description (Optional)
-                        </Typography>
-                        <Textarea
-                            rows={7}
-                            placeholder="eg. This is a white shoes with a comfortable sole."
-                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-2 text-left font-medium"
-                        >
-                            Description (Optional)
-                        </Typography>
-                        <Textarea
-                            rows={7}
-                            placeholder="eg. This is a white shoes with a comfortable sole."
-                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="mb-2 text-left font-medium"
-                        >
-                            Description (Optional)
-                        </Typography>
-                        <Textarea
-                            rows={7}
-                            placeholder="eg. This is a white shoes with a comfortable sole."
-                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
-                            labelProps={{
-                                className: "hidden",
-                            }}
-                        />
-                    </div>
+                    <CustomSelect
+                        data={savedData.airline.id.toString()}
+                        defaultValue="Pilih Maskapai"
+                        idDefaultValue="0"
+                        label="Maskapai"
+                        valueList={airlinesId.map((_id) => {
+                            return _id.toString();
+                        })}
+                        list={airlines.map((_airline) => {
+                            return (
+                                _airline &&
+                                `${_airline.name} ${_airline.route} - ${_airline.price}`
+                            );
+                        })}
+                        onChange={(value) => {
+                            const selectedAirline = airlines.find(
+                                (_airline) =>
+                                    _airline && Number(value) === _airline.id
+                            );
+
+                            if (selectedAirline)
+                                setSavedData({
+                                    ...savedData,
+                                    airline: selectedAirline,
+                                });
+                        }}
+                    />
                 </DialogBody>
             </Dialog>
         </main>

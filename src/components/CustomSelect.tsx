@@ -7,17 +7,23 @@ export default function CustomSelect({
     onChange,
     defaultValue,
     list,
+    className = "w-full",
+    valueList,
+    idDefaultValue,
 }: {
+    className?: string;
     label: string;
     data: string;
     onChange: (value: string) => void;
     defaultValue: string;
+    idDefaultValue?: string;
     list: Array<string>;
+    valueList?: Array<string> | undefined;
 }): React.ReactElement {
     const keyPrefix = label.toLocaleLowerCase().split(" ").join("-");
 
     return (
-        <div className="w-full">
+        <div className={className}>
             <Typography
                 variant="small"
                 color="blue-gray"
@@ -37,12 +43,18 @@ export default function CustomSelect({
                 }}
             >
                 {[
-                    <Option key={keyPrefix + "-(-1)"} value={defaultValue}>
+                    <Option
+                        key={keyPrefix + "-(-1)"}
+                        value={idDefaultValue ? idDefaultValue : defaultValue}
+                    >
                         {defaultValue}
                     </Option>,
                     ...list.map((_list: string, index: number) => {
                         return (
-                            <Option value={_list} key={keyPrefix + "-" + index}>
+                            <Option
+                                value={valueList ? valueList[index] : _list}
+                                key={keyPrefix + "-" + index}
+                            >
                                 {_list}
                             </Option>
                         );
