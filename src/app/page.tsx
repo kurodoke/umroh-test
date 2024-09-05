@@ -1,101 +1,298 @@
-import Image from "next/image";
+"use client";
+
+import { CloseIcon } from "@/components/CloseIcon";
+import {
+    Button,
+    Dialog,
+    DialogBody,
+    DialogHeader,
+    Input,
+    Select,
+    Textarea,
+    Typography,
+    Option,
+    Popover,
+    PopoverContent,
+    PopoverHandler,
+} from "@material-tailwind/react";
+import { format } from "date-fns";
+import "react-day-picker/style.css";
+import React from "react";
+import { useEffect, useState } from "react";
+import { DayPicker } from "react-day-picker";
+import DatePicker from "@/components/DatePicker";
+import CustomSelect from "@/components/CustomSelect";
+
+//temp data of month period before using database
+type MonthPeriodInterface = Array<string>;
+type DepartureFromInterface = Array<string>;
+type DepartureToInterface = Array<string>;
+
+const dataMonthPeriod = [
+    "01 SEPT 2024 - 30 OKT 2024",
+    "01 NOV 2024 - 10 DES 2024",
+    "11 DES 2024 - 11 JAN 2025",
+    "11 JAN 2025 - 28 FEB 2025",
+    "01 MAR 2025 - 21 MAR 2025",
+    "22 MAR 2025 - 31 MAR 2025",
+    "01 APR 2025 - 30 APR 2025",
+];
+
+const dataDepartureFrom = [
+    "MAKASSAR",
+    "JAKARTA",
+    "SURABAYA",
+    "BANJARMASIN",
+    "MEDAN",
+    "KENDARI",
+    "KOTA PALU",
+    "SINGAPURA",
+    "KUALA LUMPUR",
+];
+
+const dataDepartureTo = ["JEDDAH", "MADINAH"];
+
+interface SavedDataInterface {
+    monthPeriod: string;
+    departureDate: Date;
+    departureFrom: string;
+    departureTo: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    //fetch data
+    const [monthPeriod, setMonthPeriod] = useState<MonthPeriodInterface>([""]);
+    const [departureFrom, setDepartureFrom] = useState<DepartureFromInterface>([
+        "",
+    ]);
+    const [departureTo, setDeparturetTo] = useState<DepartureToInterface>([""]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    //saved data
+    const [savedData, setSavedData] = useState<SavedDataInterface>({
+        monthPeriod: "Pilih Periode Bulan",
+        departureDate: new Date(),
+        departureFrom: "Pilih Berangkat Darimana",
+        departureTo: "Pilih Tujuan Kemana",
+    });
+
+    //open and close modal
+    const [isOpenModal, setOpenModal] = useState(false);
+    const modalHandler = () => {
+        setOpenModal(!isOpenModal);
+    };
+
+    //---
+    useEffect(() => {
+        if (monthPeriod.length == 1) setMonthPeriod(dataMonthPeriod);
+        if (departureFrom.length == 1) setDepartureFrom(dataDepartureFrom);
+        if (departureTo.length == 1) setDeparturetTo(dataDepartureTo);
+    }, [monthPeriod, departureTo, departureFrom]);
+
+    return (
+        <main>
+            <Button className="" onClick={modalHandler}>
+                Tambah Produk
+            </Button>
+            <Dialog open={isOpenModal} handler={modalHandler} size="xl">
+                <DialogHeader>
+                    <div className="flex justify-between w-full items-center">
+                        <Typography variant="h4" color="blue-gray">
+                            Tambah Produk
+                        </Typography>
+                        <CloseIcon onClick={modalHandler}></CloseIcon>
+                    </div>
+                </DialogHeader>
+                <DialogBody className="space-y-4 pb-6">
+                    <CustomSelect
+                        data={savedData.monthPeriod}
+                        defaultValue="Pilih Periode Bulan"
+                        label="Periode Bulan"
+                        list={monthPeriod}
+                        onChange={(value) => {
+                            setSavedData({
+                                ...savedData,
+                                monthPeriod: value,
+                            });
+                        }}
+                    />
+                    <DatePicker
+                        defaultValue="Pilih Hari Keberangkatan"
+                        label="Tanggal Berangkat"
+                        dataDate={savedData.departureDate}
+                        onSelect={(value) => {
+                            setSavedData({
+                                ...savedData,
+                                departureDate: value,
+                            });
+                        }}
+                    />
+                    <div className="flex gap-4">
+                        <CustomSelect
+                            data={savedData.departureFrom}
+                            defaultValue="Pilih Berangkat Darimana"
+                            label="Berangkat Dari"
+                            list={departureFrom}
+                            onChange={(value) => {
+                                setSavedData({
+                                    ...savedData,
+                                    departureFrom: value,
+                                });
+                            }}
+                        />
+                        <CustomSelect
+                            data={savedData.departureTo}
+                            defaultValue="Pilih Tujuan Kemana"
+                            label="Tujuan Ke"
+                            list={departureTo}
+                            onChange={(value) => {
+                                setSavedData({
+                                    ...savedData,
+                                    departureTo: value,
+                                });
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="mb-2 text-left font-medium"
+                        >
+                            Name
+                        </Typography>
+                        <Input
+                            color="gray"
+                            size="lg"
+                            placeholder="eg. White Shoes"
+                            name="name"
+                            className="placeholder:opacity-100 focus:!border-t-gray-900"
+                            containerProps={{
+                                className: "!min-w-full",
+                            }}
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="mb-2 text-left font-medium"
+                        >
+                            Category
+                        </Typography>
+                        <Select
+                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                            placeholder="1"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        >
+                            <Option>Clothing</Option>
+                            <Option>Fashion</Option>
+                            <Option>Watches</Option>
+                        </Select>
+                    </div>
+                    <div className="flex gap-4">
+                        <div className="w-full">
+                            <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="mb-2 text-left font-medium"
+                            >
+                                Weight
+                            </Typography>
+                            <Input
+                                color="gray"
+                                size="lg"
+                                placeholder="eg. <8.8oz | 250g"
+                                name="weight"
+                                className="placeholder:opacity-100 focus:!border-t-gray-900"
+                                containerProps={{
+                                    className: "!min-w-full",
+                                }}
+                                labelProps={{
+                                    className: "hidden",
+                                }}
+                            />
+                        </div>
+                        <div className="w-full">
+                            <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="mb-2 text-left font-medium"
+                            >
+                                Size
+                            </Typography>
+                            <Input
+                                color="gray"
+                                size="lg"
+                                placeholder="eg. US 8"
+                                name="size"
+                                className="placeholder:opacity-100 focus:!border-t-gray-900"
+                                containerProps={{
+                                    className: "!min-w-full",
+                                }}
+                                labelProps={{
+                                    className: "hidden",
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="mb-2 text-left font-medium"
+                        >
+                            Description (Optional)
+                        </Typography>
+                        <Textarea
+                            rows={7}
+                            placeholder="eg. This is a white shoes with a comfortable sole."
+                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="mb-2 text-left font-medium"
+                        >
+                            Description (Optional)
+                        </Typography>
+                        <Textarea
+                            rows={7}
+                            placeholder="eg. This is a white shoes with a comfortable sole."
+                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="mb-2 text-left font-medium"
+                        >
+                            Description (Optional)
+                        </Typography>
+                        <Textarea
+                            rows={7}
+                            placeholder="eg. This is a white shoes with a comfortable sole."
+                            className="!w-full !border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-600 ring-4 ring-transparent focus:!border-primary focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                            labelProps={{
+                                className: "hidden",
+                            }}
+                        />
+                    </div>
+                </DialogBody>
+            </Dialog>
+        </main>
+    );
 }
