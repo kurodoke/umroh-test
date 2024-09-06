@@ -413,7 +413,7 @@ export default function DialogModalPageThree({
                     <Textarea
                         value={intrenation}
                         onChange={(_e) => {
-                            setDescription(_e.target.value);
+                            setIntrenation(_e.target.value);
                         }}
                         className="!border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
                         labelProps={{

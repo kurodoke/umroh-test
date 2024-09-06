@@ -306,6 +306,7 @@ export default function DialogModalDetail({
 
                         <div>
                             <DetailText
+                                variant="h5"
                                 title="Total"
                                 data={formatCurrency(
                                     inputedData.airline.price +
