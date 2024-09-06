@@ -20,64 +20,26 @@ import DatePicker from "@/components/DatePicker";
 import CustomSelect from "@/components/CustomSelect";
 import { Data, DataInterface, DataType } from "@/app/data";
 import formatCurrency from "@/util/formatCurrency";
-
-export interface InputedDataPageTwoInterface {
-    //madinah
-    vendorMadinah: string;
-    starHotelMadinah: number | string;
-    hotelMadinah: DataInterface.InputHotelInterface;
-    stayDurationMadinah: number | string;
-    checkInMadinah: Date | string;
-    checkOutMadinah: Date | string;
-
-    //makkah
-    vendorMakkah: string;
-    starHotelMakkah: number | string;
-    hotelMakkah: DataInterface.InputHotelInterface;
-    stayDurationMakkah: number | string;
-    checkInMakkah: Date | string;
-    checkOutMakkah: Date | string;
-}
+import { PreviousIcon } from "./PreviousIcon";
+import { InputedDataPageTwoInterface } from "@/app/page";
 
 export default function DialogModalPageTwo({
     openHandler,
     openState,
     submitHandler,
+    prevHandler,
+    inputedData,
+    setInputedData,
 }: {
     openHandler: () => void;
     openState: boolean;
     submitHandler: () => void;
+    prevHandler: () => void;
+    inputedData: InputedDataPageTwoInterface;
+    setInputedData: React.Dispatch<
+        React.SetStateAction<InputedDataPageTwoInterface>
+    >;
 }): React.ReactElement {
-    //inputed data
-    const [inputedData, setInputedData] = useState<InputedDataPageTwoInterface>(
-        {
-            vendorMadinah: "",
-            starHotelMadinah: "",
-            hotelMadinah: {
-                id: -1,
-                name: "",
-                type: "",
-                price: 0,
-            },
-            stayDurationMadinah: "",
-            checkInMadinah: "",
-            checkOutMadinah: "",
-
-            //makkah
-            vendorMakkah: "",
-            starHotelMakkah: "",
-            hotelMakkah: {
-                id: -1,
-                name: "",
-                type: "",
-                price: 0,
-            },
-            stayDurationMakkah: "",
-            checkInMakkah: "",
-            checkOutMakkah: "",
-        }
-    );
-
     //fetch data
     const [vendorMadinah, setVendorMadinah] = useState<DataType.Vendor>();
     const [starHotelMadinah, setStarHotelMadinah] =
@@ -164,9 +126,12 @@ export default function DialogModalPageTwo({
         >
             <DialogHeader>
                 <div className="flex justify-between w-full items-center">
-                    <Typography variant="h4" color="blue-gray">
-                        P
-                    </Typography>
+                    <PreviousIcon
+                        onClick={() => {
+                            openHandler();
+                            prevHandler();
+                        }}
+                    ></PreviousIcon>
                     <CloseIcon onClick={openHandler}></CloseIcon>
                 </div>
             </DialogHeader>

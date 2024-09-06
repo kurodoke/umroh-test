@@ -26,6 +26,11 @@ export namespace DataInterface {
         name: string;
         price: number;
     }
+
+    export interface IteneraryInterface {
+        id: number;
+        name: string;
+    }
 }
 
 //type of data
@@ -57,6 +62,8 @@ export namespace DataType {
     export type BulletTrain = Array<DataInterface.StandardInterface>;
     export type Mutawif = Array<DataInterface.StandardInterface>;
     export type TourLeader = Array<DataInterface.StandardInterface>;
+
+    export type Itenerary = Array<DataInterface.IteneraryInterface>;
 }
 
 export namespace Data {
@@ -559,5 +566,9 @@ export namespace Data {
     export const TourLeader: DataType.TourLeader = [
         { id: 0, name: "TANPA TOUR LEADER", price: 0 },
         { id: 1, name: "DENGAN TOUR LEADER", price: 757000 },
+    ];
+
+    export const Itenerary: DataType.Itenerary = [
+        { id: 1, name: "UMROH 12 HARI - 5 MEKKAH, 5 MADDINAH" },
     ];
 }

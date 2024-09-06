@@ -21,54 +21,26 @@ import CustomSelect from "@/components/CustomSelect";
 import { Data, DataInterface, DataType } from "@/app/data";
 import SelectWithOutput from "./SelectWithOutput";
 import formatCurrency from "@/util/formatCurrency";
-
-export interface InputedDataPageThreeInterface {
-    handlingSaudia: DataInterface.StandardInterface;
-    equipment: DataInterface.StandardInterface;
-    travelInsurance: DataInterface.StandardInterface;
-    manasik: DataInterface.StandardInterface;
-    handlingDomestic: DataInterface.StandardInterface;
-    visa: DataInterface.StandardInterface;
-    transport: DataInterface.StandardInterface;
-    pilgrimage: DataInterface.StandardInterface;
-    bulletTrain: DataInterface.StandardInterface;
-    mutawif: DataInterface.StandardInterface;
-    tourLeader: DataInterface.StandardInterface;
-    siskopatuh: number;
-}
-
-const initStandard: DataInterface.StandardInterface = {
-    id: 0,
-    name: "TIDAK",
-    price: 0,
-};
+import { PreviousIcon } from "./PreviousIcon";
+import { InputedDataPageThreeInterface } from "@/app/page";
 
 export default function DialogModalPageThree({
     openHandler,
     openState,
     submitHandler,
+    prevHandler,
+    inputedData,
+    setInputedData,
 }: {
     openHandler: () => void;
     openState: boolean;
     submitHandler: () => void;
+    prevHandler: () => void;
+    inputedData: InputedDataPageThreeInterface;
+    setInputedData: React.Dispatch<
+        React.SetStateAction<InputedDataPageThreeInterface>
+    >;
 }): React.ReactElement {
-    //inputed data
-    const [inputedData, setInputedData] =
-        useState<InputedDataPageThreeInterface>({
-            handlingSaudia: initStandard,
-            equipment: initStandard,
-            travelInsurance: initStandard,
-            manasik: initStandard,
-            handlingDomestic: initStandard,
-            visa: initStandard,
-            transport: initStandard,
-            pilgrimage: initStandard,
-            bulletTrain: initStandard,
-            mutawif: initStandard,
-            tourLeader: initStandard,
-            siskopatuh: 80000,
-        });
-
     //fetch data
     const [handlingSaudia, setHandlingSaudia] = useState<DataType.Handling>();
     const [handlingSaudiaId, setHandlingSaudiaId] = useState<Array<number>>();
@@ -106,6 +78,11 @@ export default function DialogModalPageThree({
     const [tourLeader, setTourLeader] = useState<DataType.TourLeader>();
     const [tourLeaderId, setTourLeaderId] = useState<Array<number>>();
     //fetch on initial render and if data is null
+
+    const [description, setDescription] = useState<string>();
+    const [intrenation, setIntrenation] = useState<string>();
+    const [itenerary, setItenerary] = useState<DataType.Itenerary>();
+
     useEffect(() => {
         if (!handlingSaudia) {
             setHandlingSaudia(Data.HandlingSaudia);
@@ -163,6 +140,10 @@ export default function DialogModalPageThree({
             setTourLeader(Data.TourLeader);
             setTourLeaderId(Data.TourLeader.map((_data) => _data.id));
         }
+
+        if (!itenerary) {
+            setItenerary(Data.Itenerary);
+        }
     }, [
         handlingSaudia,
         equipment,
@@ -175,6 +156,7 @@ export default function DialogModalPageThree({
         bulletTrain,
         mutawif,
         tourLeader,
+        itenerary,
     ]);
 
     const getHotelPrice = (
@@ -209,9 +191,12 @@ export default function DialogModalPageThree({
         >
             <DialogHeader>
                 <div className="flex justify-between w-full items-center">
-                    <Typography variant="h4" color="blue-gray">
-                        P
-                    </Typography>
+                    <PreviousIcon
+                        onClick={() => {
+                            openHandler();
+                            prevHandler();
+                        }}
+                    ></PreviousIcon>
                     <CloseIcon onClick={openHandler}></CloseIcon>
                 </div>
             </DialogHeader>
@@ -373,6 +358,69 @@ export default function DialogModalPageThree({
                         disabled
                     />
                 </div>
+                <div>
+                    <CustomSelect
+                        data={inputedData.itenerary.id.toString()}
+                        defaultValue="0"
+                        placeHolder="Pilih Itenerary"
+                        label="Pilih Deskripsi, Syarat Ketentuan & Intenari Perjalanan"
+                        list={itenerary?.map((_data) => {
+                            return _data.name;
+                        })}
+                        valueList={itenerary?.map((_data) => {
+                            return _data.id.toString();
+                        })}
+                        onChange={(value) => {
+                            const selectedData = itenerary?.find(
+                                (_data) => _data && Number(value) === _data.id
+                            );
+
+                            if (selectedData)
+                                setInputedData({
+                                    ...inputedData,
+                                    itenerary: selectedData,
+                                });
+                        }}
+                    />
+                </div>
+                <div>
+                    <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="mb-2 text-left font-medium"
+                    >
+                        Deskripsi & Syarat Ketentuan
+                    </Typography>
+                    <Textarea
+                        value={description}
+                        onChange={(_e) => {
+                            setDescription(_e.target.value);
+                        }}
+                        className="!border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                        labelProps={{
+                            className: "hidden",
+                        }}
+                    ></Textarea>
+                </div>
+                <div>
+                    <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="mb-2 text-left font-medium"
+                    >
+                        Intrenasi Perjalanan
+                    </Typography>
+                    <Textarea
+                        value={intrenation}
+                        onChange={(_e) => {
+                            setDescription(_e.target.value);
+                        }}
+                        className="!border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
+                        labelProps={{
+                            className: "hidden",
+                        }}
+                    ></Textarea>
+                </div>
             </DialogBody>
             <DialogFooter>
                 <Button
@@ -383,7 +431,7 @@ export default function DialogModalPageThree({
                         submitHandler();
                     }}
                 >
-                    Lanjutkan
+                    Submit
                 </Button>
             </DialogFooter>
         </Dialog>

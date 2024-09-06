@@ -19,45 +19,23 @@ import { useEffect, useState } from "react";
 import DatePicker from "@/components/DatePicker";
 import CustomSelect from "@/components/CustomSelect";
 import { Data, DataInterface, DataType } from "@/app/data";
-
-export interface InputedDataPageOneInterface {
-    monthPeriod: string;
-    departureDate: Date | string;
-    departureFrom: string;
-    departureTo: string;
-    daysPacket: number | string;
-    returnDate: Date | string;
-    returnFrom: string;
-    returnTo: string;
-    airline: DataInterface.AirlineInterface;
-    passenger: number | string;
-}
+import { InputedDataPageOneInterface } from "@/app/page";
 
 export default function DialogModalPageOne({
     openHandler,
     openState,
     submitHandler,
+    inputedData,
+    setInputedData,
 }: {
     openHandler: () => void;
     openState: boolean;
     submitHandler: () => void;
+    inputedData: InputedDataPageOneInterface;
+    setInputedData: React.Dispatch<
+        React.SetStateAction<InputedDataPageOneInterface>
+    >;
 }): React.ReactElement {
-    //inputed data
-    const [inputedData, setInputedData] = useState<InputedDataPageOneInterface>(
-        {
-            monthPeriod: "",
-            departureDate: "",
-            departureFrom: "",
-            departureTo: "",
-            daysPacket: "",
-            returnDate: "",
-            returnFrom: "",
-            returnTo: "",
-            airline: { id: -1, name: "", price: -1, route: "" },
-            passenger: "",
-        }
-    );
-
     //fetch data
     const [monthPeriod, setMonthPeriod] = useState<DataType.MonthPeriod>();
     const [departureFrom, setDepartureFrom] =
