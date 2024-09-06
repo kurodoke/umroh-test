@@ -14,13 +14,15 @@ import { DayPicker } from "react-day-picker";
 export default function DatePicker({
     dataDate,
     label,
-    defaultValue,
+    placeHolder,
     onSelect,
+    className = "w-full",
 }: {
-    dataDate: Date;
+    dataDate: Date | string;
     label: string;
-    defaultValue: string;
+    placeHolder: string;
     onSelect: (value: Date) => void;
+    className?: string;
 }): React.ReactElement {
     //open and close popover
     const [isOpenPopover, setOpenPopover] = useState(false);
@@ -29,7 +31,7 @@ export default function DatePicker({
     };
 
     return (
-        <div>
+        <div className={className}>
             <Typography
                 variant="small"
                 color="blue-gray"
@@ -47,7 +49,9 @@ export default function DatePicker({
                         onChange={() => null}
                         readOnly
                         value={
-                            dataDate ? format(dataDate, "PPP") : defaultValue
+                            typeof dataDate == "string"
+                                ? placeHolder
+                                : format(dataDate, "PPP")
                         }
                         className="!border-[1.5px] !border-blue-gray-200/90 !border-t-blue-gray-200/90 bg-white text-gray-800 ring-4 ring-transparent placeholder:text-gray-600 focus:!border-blue-gray-900 focus:!border-t-blue-gray-900 group-hover:!border-primary"
                         labelProps={{
@@ -58,7 +62,9 @@ export default function DatePicker({
                 <PopoverContent className="z-[9999]">
                     <DayPicker
                         mode="single"
-                        selected={dataDate}
+                        selected={
+                            dataDate instanceof Date ? dataDate : undefined
+                        }
                         onSelect={(value) => {
                             if (value) onSelect(value);
                             popoverHandler();

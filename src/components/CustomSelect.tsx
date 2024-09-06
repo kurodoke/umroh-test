@@ -5,22 +5,28 @@ export default function CustomSelect({
     label,
     data,
     onChange,
-    defaultValue,
+    placeHolder,
     list,
     className = "w-full",
     valueList,
-    idDefaultValue,
+    defaultValue,
+    formatListText = (text) => {
+        return text;
+    },
 }: {
     className?: string;
     label: string;
-    data: string;
+    data: string | null;
     onChange: (value: string) => void;
-    defaultValue: string;
-    idDefaultValue?: string;
-    list: Array<string>;
+    placeHolder: string;
+    defaultValue?: string;
+    list?: Array<string>;
     valueList?: Array<string> | undefined;
+    formatListText?: (value: string) => string;
 }): React.ReactElement {
     const keyPrefix = label.toLocaleLowerCase().split(" ").join("-");
+
+    if (!data) data = placeHolder;
 
     return (
         <div className={className}>
@@ -45,20 +51,24 @@ export default function CustomSelect({
                 {[
                     <Option
                         key={keyPrefix + "-(-1)"}
-                        value={idDefaultValue ? idDefaultValue : defaultValue}
+                        value={defaultValue ? defaultValue : placeHolder}
                     >
-                        {defaultValue}
+                        {placeHolder}
                     </Option>,
-                    ...list.map((_list: string, index: number) => {
-                        return (
-                            <Option
-                                value={valueList ? valueList[index] : _list}
-                                key={keyPrefix + "-" + index}
-                            >
-                                {_list}
-                            </Option>
-                        );
-                    }),
+                    ...(list
+                        ? list.map((_list: string, index: number) => {
+                              return (
+                                  <Option
+                                      value={
+                                          valueList ? valueList[index] : _list
+                                      }
+                                      key={keyPrefix + "-" + index}
+                                  >
+                                      {formatListText(_list)}
+                                  </Option>
+                              );
+                          })
+                        : []),
                 ]}
             </Select>
         </div>
