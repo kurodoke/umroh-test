@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import DatePicker from "@/components/DatePicker";
 import CustomSelect from "@/components/CustomSelect";
 import { Data, DataInterface, DataType } from "@/app/data";
+import formatCurrency from "@/util/formatCurrency";
 
 export interface InputedDataPageTwoInterface {
     //madinah
@@ -41,9 +42,11 @@ export interface InputedDataPageTwoInterface {
 export default function DialogModalPageTwo({
     openHandler,
     openState,
+    submitHandler,
 }: {
     openHandler: () => void;
     openState: boolean;
+    submitHandler: () => void;
 }): React.ReactElement {
     //inputed data
     const [inputedData, setInputedData] = useState<InputedDataPageTwoInterface>(
@@ -128,10 +131,6 @@ export default function DialogModalPageTwo({
         hotelMakkah,
         stayDurationMakkah,
     ]);
-
-    const formatCurrency = (amount: number) => {
-        return `Rp${amount.toLocaleString("id-ID")}`;
-    };
 
     const getHotelPrice = (
         value: "DUO" | "TRIO" | "QUAD" | string,
@@ -465,7 +464,14 @@ export default function DialogModalPageTwo({
                 </div>
             </DialogBody>
             <DialogFooter>
-                <Button variant="filled" size="sm" onClick={openHandler}>
+                <Button
+                    variant="filled"
+                    size="sm"
+                    onClick={() => {
+                        openHandler();
+                        submitHandler();
+                    }}
+                >
                     Lanjutkan
                 </Button>
             </DialogFooter>

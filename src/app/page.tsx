@@ -6,10 +6,12 @@ import React from "react";
 import { useEffect, useState } from "react";
 import DialogModalPageOne from "@/components/DialogModalPageOne";
 import DialogModalPageTwo from "@/components/DialogModalPageTwo";
+import DialogModalPageThree from "@/components/DialogModalPageThree";
 
 export default function Home() {
     const [isOpenDialogPageOne, setOpenDialogPageOne] = useState(false);
     const [isOpenDialogPageTwo, setOpenDialogPageTwo] = useState(false);
+    const [isOpenDialogPageThree, setOpenDialogPageThree] = useState(false);
 
     return (
         <main>
@@ -34,6 +36,18 @@ export default function Home() {
                 openState={isOpenDialogPageTwo}
                 openHandler={() => {
                     setOpenDialogPageTwo(!isOpenDialogPageTwo);
+                }}
+                submitHandler={() => {
+                    setOpenDialogPageThree(!isOpenDialogPageThree);
+                }}
+            />
+            <DialogModalPageThree
+                openState={isOpenDialogPageThree}
+                openHandler={() => {
+                    setOpenDialogPageThree(!isOpenDialogPageThree);
+                }}
+                submitHandler={function (): void {
+                    throw new Error("Function not implemented.");
                 }}
             />
         </main>
